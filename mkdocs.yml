@@ -1,15 +1,39 @@
 site_name: Guide to x86-32 Kernel Development
 theme:
   name: 'material'
-pages:
+  palette:
+    primary: 'light blue'
+    accent:  'light blue'
+
+nav:
 - Introduction: 'index.md'
 - Preparation: 
   - 'Preparation': 'Preparation/Preparation.md'
   - 'Boot Sequence': 'Preparation/Boot Sequence.md'
   - 'UEFI': 'Preparation/UEFI.md'
+  - 'Virtual Disk': "Preparation/Build a Virtual Disk.md"
+
 markdown_extensions:
   - admonition
   - codehilite:
       guess_lang: false
   - toc:
       permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+extra_javascript:
+  - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
