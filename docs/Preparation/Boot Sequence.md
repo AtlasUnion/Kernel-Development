@@ -6,7 +6,7 @@ Have you ever wondered what happen after you press the power button? In this sec
 
 Booting is starting up a computer until it is ready for users to use it. It is usually initiated by the press of power button on a personal computer although it is possible to initiate booting via software command. After you press the power button, the CPU or Central Processing Unit is powered on with no execution logic in the RAM, which is volatile memory and thus lose information once power off and on. So, to let the CPU do work, some logic must be loaded into the memory to let CPU execute.
 
-But how does CPU load anything if nothing in the memory instructs CPU to do so? To overcome this dilemma, the computer architect design the cpu so that when someone press the power button and a reset signal is sent to the CPU, the CPU start executing at a predefined address. Typically, that address point to a ROM (Read Only Memory), which contains BIOS.
+But how does CPU load anything if nothing in the memory instructs CPU to do so? To overcome this dilemma, the computer architects design the cpu so that when someone press the power button and a reset signal is sent to the CPU, the CPU start reading instructions from a predefined address. Typically, that address point to a ROM (Read Only Memory), which contains BIOS.
 
 ??? "Why CPU needs RAM to execute instruction?"
     Why RAM is needed for CPU to be able to execute instruction? This has to do with how CPU was designed. The instructions have to be stored somewhere so CPU can read them and then execute. The ideal candidate should be fast so it does not impact the CPU performance and also relatively cheap to produce.
@@ -24,6 +24,11 @@ Why do we need it? There are varieties of PC motherboards -- some have hardware 
 * Memory Probe
 * etc
 
+??? "Does CPU read BIOS from ROM?"
+    The answer is yes and no. The CPU does need to read BIOS from ROM initially. However, the reading speed of ROM is too slow for modern needs of fast booting process. So a technique called shadowing is used.
+
+    Shadowing essentially copy data from ROM into RAM for faster execution. The RAM area used is called shadow RAM.
+
 ## POST
 
 When the computer is switched on, the BIOS does a series of diagnostics called **POST** - Power On Self Test. For IBM-compatible PC POST, the principal duties of BIOS during POST includes:
@@ -33,9 +38,11 @@ When the computer is switched on, the BIOS does a series of diagnostics called *
 * Verify some basic components like timer, interrupt controller
 * Find and verify main memory
 
+The boot will proceed if and only if POST finds no problem.
+
 ## Master Boot Record
 
-Right after POST, the BIOS checks bootable devices (Any  piece of hardware that can store files) for a boot signature, which is in a boot sector known as **MBR** (sector number 0, See Below Image). The boot signature contains bytes sequence 0x55, 0xAA at bytes offset 510 and 511 respectively. When the BIOS find such MBR, it is loaded into memory at 0x7c00 and the executation is transfered to MBR. Note the MBR cannot exceeds 512 bytes or one sector due to historical reasons (Someone arbitrarily decided the size. Then the design got popular and it became a standard.)  
+Right after POST, the BIOS checks bootable devices (Any  piece of hardware that can store files) for a boot signature, which is in a boot sector known as **MBR**. MBR is assumed to reside on the 1st sector on 1st track of a cylinder, under first head (See Image below). The boot signature contains bytes sequence 0x55, 0xAA at bytes offset 510 and 511 respectively. When the BIOS find such MBR, it is loaded into memory at 0x7c00 and the executation is transfered to MBR. Note the MBR cannot exceeds 512 bytes or one sector due to historical reasons (Someone arbitrarily decided the size. Then the design got popular and it became a standard.)  
 
 <!-- TODO: Remember to add link to Partition Table-->
 The MBR contains a bootstrap program and Partition Table. The first 440 bytes of the MBR contains so called bootstrap code. Give the limited size of the code, a typical bootstrap code job is to load other code from the disk and transfer control to that code to do other booting jobs, especially loading kernel into memory.
@@ -46,7 +53,9 @@ The MBR contains a bootstrap program and Partition Table. The first 440 bytes of
 
 ## CPU Mode
 
-One of the remaining jobs of modern bootstrapping code is to switch from Real Mode to Protected Mode. What is Real Mode and Protected Mode and what are they for?
+CPU modes are operating modes for the CPU, which specify the type and scope of operation that can be performed by the CPU. One example of type is the length of operation (16 bit or 32 bit) and scope can be if certain operation is allowed.
+
+One of the remaining jobs of modern bootstrapping code is to switch from Real Mode to Protected Mode.
 
 ### Real Mode
 
