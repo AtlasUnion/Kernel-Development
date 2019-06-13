@@ -8,7 +8,7 @@ Booting is starting up a computer until it is ready for users to use it. It is u
 
 But how does CPU load anything if nothing in the memory instructs CPU to do so? To overcome this dilemma, the computer architects design the cpu so that when someone press the power button and a reset signal is sent to the CPU, the CPU start reading instructions from a predefined address. Typically, that address point to a ROM (Read Only Memory), which contains BIOS.
 
-??? "Why CPU needs RAM to execute instruction?"
+??? question "Why CPU needs RAM to execute instruction?"
     Why RAM is needed for CPU to be able to execute instruction? This has to do with how CPU was designed. The instructions have to be stored somewhere so CPU can read them and then execute. The ideal candidate should be fast so it does not impact the CPU performance and also relatively cheap to produce.
 
     CPU itself contains some on chip storage known as registers. Those registers are fast in terms of read and write speed. Modern registers' speed are nearly the same as CPU's. However, registers are expensive to produce. Moreover, if registers get larger in capacity, speed will be negatively impacted and thus impact the performance of the CPU. Therefore, those on chip registers are not suited for the task of storing instructions. So RAM comes in place -- it is a lot less expensive than registers and much faster than secondary storage devices such as hard disk or SSD. Therefore, RAM gives CPU a fast storage medium for instructions while not letting anyone go bankrupt.
@@ -24,7 +24,7 @@ Why do we need it? There are varieties of PC motherboards -- some have hardware 
 * Memory Probe
 * etc
 
-??? "Does CPU read BIOS from ROM?"
+??? question "Does CPU read BIOS from ROM?"
     The answer is yes and no. The CPU does need to read BIOS from ROM initially. However, the reading speed of ROM is too slow for modern needs of fast booting process. So a technique called shadowing is used.
 
     Shadowing essentially copy data from ROM into RAM for faster execution. The RAM area used is called shadow RAM.
@@ -45,11 +45,32 @@ The boot will proceed if and only if POST finds no problem.
 Right after POST, the BIOS checks bootable devices (Any  piece of hardware that can store files) for a boot signature, which is in a boot sector known as **MBR**. MBR is assumed to reside on the 1st sector on 1st track of a cylinder, under first head (See Image below). The boot signature contains bytes sequence 0x55, 0xAA at bytes offset 510 and 511 respectively. When the BIOS find such MBR, it is loaded into memory at 0x7c00 and the executation is transfered to MBR. Note the MBR cannot exceeds 512 bytes or one sector due to historical reasons (Someone arbitrarily decided the size. Then the design got popular and it became a standard.)  
 
 <!-- TODO: Remember to add link to Partition Table-->
-The MBR contains a bootstrap program and Partition Table. The first 440 bytes of the MBR contains so called bootstrap code. Give the limited size of the code, a typical bootstrap code job is to load other code from the disk and transfer control to that code to do other booting jobs, especially loading kernel into memory.
+The MBR contains a bootstrap program and Partition Table. The first 440 bytes of the MBR contains so called bootstrap code.
+BIOS will load MBR to physical address 0x7c00 and then instruct CPU jumps to the beginning of the loaded MBR to start execute.
+
+| Offset | Size(bytes) | Function |
+|--------|:-----------:|---------:|
+| 0x000  | 440[^1]         | MBR Bootstrap code |
+| 0x1B8  | 4           | Optional: "Unique Disk ID" (Used to identify the drive) |
+| 0x1BC  | 2           | Optional: Reserved 0x0000[^2] |
+| 0x1BE  | 16          | First partition table entry   |
+| 0x1CE  | 16          | Second partition table entry  |
+| 0x1DE  | 16          | Third partition table entry   |
+| 0x1EE  | 16          | Fourth partition table entry  |
+| 0x1FE  | 2           | (0x55, 0xAA) "Valid bootsector" |
+
+??? "Booting Stages"
+    Give the limited size of the code, a typical bootstrap code job is to load other code from the disk and transfer control to that code to do other booting jobs. Those different code parts are called booting stages with code in MBR being stage 1.
+??? question "Why MBR is loaded at 0x7c00?"
+    This has to be traced back to Intel's first x86 processor 8088. 
+
+
+[^1]: Can be extended to 446 bytes if override next two fields
+[^2]: 0x0000 indicating read-write; 0x5A5A indicating read-only
 
 ![CHS](/img/CHS.png)
 
-*Typical Hard Disk Geometry*
+*Typical Hard Disk Geometry(https://en.wikipedia.org/wiki/Cylinder-head-sector#/media/File:Hard_drive_geometry_-_English_-_2019-05-30.svg)*
 
 ## CPU Mode
 

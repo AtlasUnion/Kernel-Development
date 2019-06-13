@@ -10,3 +10,13 @@ However,  with  modern  filesystem  like  NTFS,  which  can  support  up  to  $1
 * Install Multiple Operating System on one storage device
 
 <!--TODO: -->
+
+## Partition Table
+
+Partition Table is the structure on the storage devices that describes each partition size and some other metadata.
+
+### MBR
+
+
+
+### GPT
