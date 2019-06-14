@@ -76,21 +76,21 @@ MBR table entries:
     | 0x7C00 | 512 bytes    | Boot Sector          |
     | 0x7E00 | 512 bytes    | Boot Data/Stack      |
 
-    The first entry is IVT or interrupt vector table. If you know what is an interrupt, then this table is for CPU to find the address of code to execute for each interrupt call. If not, you can just understand it as a structure needed for using functions provided by BIOS for now. Next is the BIOS data area, which BIOS will be using to do operation. Third is where the OS will be loaded. Next two are the boot sector and data area it uses to boot. This layout was created to give as much contiguous memory to the operating system as possible so the Boot sector was stored at the end of the memory.
+    The first entry is IVT or interrupt vector table. If you know what is an interrupt, this table is for CPU to find the address of code to execute for each interrupt call. If not, you can just see it as a structure needed for using functions provided by BIOS for now. Next is the BIOS data area, which BIOS will be using to do operation. Third is where the OS will be loaded. Next two are the boot sector and data area it uses to boot. This layout was created to give as much contiguous memory to the operating system as possible so the Boot sector was stored at the end of the memory.
 
 ??? "Typical Hard Disk Geometry"
     ![CHS](/img/CHS.png)
     *Typical Hard Disk Geometry(https://en.wikipedia.org/wiki/Cylinder-head-sector#/media/File:Hard_drive_geometry_-_English_-_2019-05-30.svg)*
 
 ## Bootloader
-Give the limited size of the MBR bootstrap code, a typical bootstrap code job is to load other code from the disk and transfer control to that code to do other booting jobs. Those different code parts are called booting stages with code in MBR being stage 1. The combinations of those code is typically called **bootloader**.
 
+Give the limited size of the MBR bootstrap code, a typical bootstrap code will load other code from the disk and transfer control to that code to do other booting jobs. Those different code parts are called booting stages with code in MBR being stage 1. The combination of those code is typically called **bootloader**.
 
 ## CPU Mode
 
 CPU modes are operating modes for the CPU, which specify the type and scope of operation that can be performed by the CPU. One example of type is the length of operation (16 bit or 32 bit) and scope can be if certain operation is allowed.
 
-One of the remaining jobs of modern bootstrapping code is to switch from Real Mode to Protected Mode.
+One of the remaining jobs of modern booting code is to switch from Real Mode to Protected Mode.
 
 ### Real Mode
 

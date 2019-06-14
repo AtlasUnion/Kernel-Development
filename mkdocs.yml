@@ -6,12 +6,16 @@ theme:
     accent:  'light blue'
 
 nav:
-- Introduction: 'index.md'
+- Introduction: 
+    - 'Introduction': 'index.md'
 - Preparation: 
-  - 'Preparation': 'Preparation/Preparation.md'
-  - 'Boot Sequence': 'Preparation/Boot Sequence.md'
-  - 'UEFI': 'Preparation/UEFI.md'
-  - 'Virtual Disk': "Preparation/Build a Virtual Disk.md"
+    - 'Preparation': './markdown/Preparation/Preparation.md'
+    - 'Boot Sequence': './markdown/Preparation/Boot Sequence.md'
+    - 'UEFI': './markdown/Preparation/UEFI.md'
+    - 'Virtual Disk': "./markdown/Preparation/Build a Virtual Disk.md"
+- Booting:
+    - 'Probe Memory': './markdown/Booting/Probe Memory.md'
+    - 'Boot loader':  './markdown/Booting/Bootloader.md'
 
 markdown_extensions:
   - admonition
