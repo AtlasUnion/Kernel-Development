@@ -42,11 +42,13 @@ The boot will proceed if and only if POST finds no problem.
 
 ## Master Boot Record
 
-Right after POST, the BIOS checks bootable devices (Any  piece of hardware that can store files) for a boot signature, which is in a boot sector known as **MBR**. MBR is assumed to reside on the 1st sector on 1st track of a cylinder, under first head (See Image below). The boot signature contains bytes sequence 0x55, 0xAA at bytes offset 510 and 511 respectively. When the BIOS find such MBR, it is loaded into memory at 0x7c00 and the executation is transfered to MBR. Note the MBR cannot exceeds 512 bytes or one sector due to historical reasons (Someone arbitrarily decided the size. Then the design got popular and it became a standard.)  
+Right after POST, the BIOS checks bootable devices (Any  piece of hardware that can store files) for a boot signature, which is in a boot sector known as **MBR**. MBR is assumed to reside on the 1st sector on 1st track of a cylinder, under first head (See "Typical Hard Disk Geometry"). The boot signature contains bytes sequence 0x55, 0xAA at bytes offset 510 and 511 respectively. When the BIOS find such MBR, it is loaded into memory at 0x7c00 and the execution is transferred to MBR. Note the MBR cannot exceeds 512 bytes or one sector due to historical reasons (Someone arbitrarily decided the size. Then the design got popular and it became a standard.)  
 
 <!-- TODO: Remember to add link to Partition Table-->
 The MBR contains a bootstrap program and Partition Table. The first 440 bytes of the MBR contains so called bootstrap code.
 BIOS will load MBR to physical address 0x7c00 and then instruct CPU jumps to the beginning of the loaded MBR to start execute.
+
+MBR table entries:
 
 | Offset | Size(bytes) | Function |
 |--------|:-----------:|---------:|
@@ -59,18 +61,30 @@ BIOS will load MBR to physical address 0x7c00 and then instruct CPU jumps to the
 | 0x1EE  | 16          | Fourth partition table entry  |
 | 0x1FE  | 2           | (0x55, 0xAA) "Valid bootsector" |
 
-??? "Booting Stages"
-    Give the limited size of the code, a typical bootstrap code job is to load other code from the disk and transfer control to that code to do other booting jobs. Those different code parts are called booting stages with code in MBR being stage 1.
 ??? question "Why MBR is loaded at 0x7c00?"
-    This has to be traced back to Intel's first x86 processor 8088. 
+    This has to be traced back to Intel's first x86 processor 8088. The IBM PC 5150 used this chip. The operating system on that PC was DOS 1.0, which requires minimal of 32 KB of memory. 
 
+    ??? Note "Minimal Memory Requirement"
+        Note minimal memory is just suggestion from the OS developer. But since most people goes with this suggestion, it is rather safe to make assumption about minimal available memory.
+    Although 8088 can support up to 1 MB of memory, given it is a 16 bit processor, IBM needs to take in consideration that no everyone will have the budget to afford 1 MB of memory. So they assumed there were in total 32 KB memory. Then the BIOS developer team decided the following memory layout:
 
-[^1]: Can be extended to 446 bytes if override next two fields
-[^2]: 0x0000 indicating read-write; 0x5A5A indicating read-only
+    | Offset | Size         | Function             |
+    |--------|--------------|----------------------|
+    | 0x0000 | 1 KB         | Real Mode IVT        |
+    | 0x0400 | 256 bytes    | BDA (BIOS Data Area) |
+    | 0x0500 | Almost 30 KB | OS load area         |
+    | 0x7C00 | 512 bytes    | Boot Sector          |
+    | 0x7E00 | 512 bytes    | Boot Data/Stack      |
 
-![CHS](/img/CHS.png)
+    The first entry is IVT or interrupt vector table. If you know what is an interrupt, then this table is for CPU to find the address of code to execute for each interrupt call. If not, you can just understand it as a structure needed for using functions provided by BIOS for now. Next is the BIOS data area, which BIOS will be using to do operation. Third is where the OS will be loaded. Next two are the boot sector and data area it uses to boot. This layout was created to give as much contiguous memory to the operating system as possible so the Boot sector was stored at the end of the memory.
 
-*Typical Hard Disk Geometry(https://en.wikipedia.org/wiki/Cylinder-head-sector#/media/File:Hard_drive_geometry_-_English_-_2019-05-30.svg)*
+??? "Typical Hard Disk Geometry"
+    ![CHS](/img/CHS.png)
+    *Typical Hard Disk Geometry(https://en.wikipedia.org/wiki/Cylinder-head-sector#/media/File:Hard_drive_geometry_-_English_-_2019-05-30.svg)*
+
+## Bootloader
+Give the limited size of the MBR bootstrap code, a typical bootstrap code job is to load other code from the disk and transfer control to that code to do other booting jobs. Those different code parts are called booting stages with code in MBR being stage 1. The combinations of those code is typically called **bootloader**.
+
 
 ## CPU Mode
 
@@ -89,3 +103,6 @@ Since there are in total 1 MB addressable memory, we can divide them into 64 KB 
 ### Protected Mode
 
 As the size of the memory get larger and the price per bytes drop drastically, Real Mode can no longer satisfy people who demand more memory. Also, Real Mode provides no means of protection as one program can override any of the 1 MB region and any program can execute any instructions they want. With those needs, Intel devise so called Protected Mode. Protected Mode gives programmers access to larger addressable memory and Privilege level to protect execution. We will further discuss Protected Mode in later sections.
+
+[^1]: Can be extended to 446 bytes if override next two fields
+[^2]: 0x0000 indicating read-write; 0x5A5A indicating read-only
