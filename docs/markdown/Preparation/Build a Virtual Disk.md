@@ -84,3 +84,38 @@ The layout of each entry:
 <!--TODO: draw a diagram for above table -->
 
 ### GPT
+
+## Build Virtual Disk
+
+### Virtual Disk
+
+Virtual disk is the software component (binary file) that emulate an actual disk storage device. We are going to create a disk image which contains the exact data structure of an actual storage device. A virtual hard disk typically consists of sector-by-sector structure. There are many file format existing for disk image, one example being ISO image. 
+
+### Tools
+
+#### fdisk
+
+"fdisk is a dialog-driven program for creation and manipulation of partition tables." (fdisk man page). We will be using fdisk to create partition table for our virtual disk.
+
+#### mke2fs
+
+"mke2fs is used to create an ext2, ext3, or ext4 filesystem, usually in a disk partition." (mke2fs man page). We will be using this tool to create filesystem on our virtual disk.
+
+#### dd
+
+dd is used to copy a file, converting and formatting according to the operands. We will be using dd to write our boot code into MBR of our disk.
+
+### Creating Virtual Disk
+
+FIrst, we are going to create an empty disk. Type the following command in your shell:
+
+``` shell
+dd if=/dev/zero of=disk.img bs=1k count=32760
+```
+This line of command creates a virtual disk of 32760*1024 bytes. 
+
+* "if=" specify the file that dd should read from -- in our case, "/dev/zero", which is a special file in Unix-like operating system that if read from it, the operating system will return sequence of null characters. 
+* "of=" specify the file that dd should write to, which is "disk.img" in our case. 
+* "bs=" specify number of bytes per block should be read and write at a time
+* "count=" specify the total number of input blocks, in our case -- number of blocks of null characters
+
