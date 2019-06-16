@@ -8,9 +8,9 @@ The hardest thing about System programming especially kernel development is to f
 
 ### What you should know before reading this tutorial
 
-This tutotial expect you to have some basic programming skills -- you should be comfortable with at least one programming language. You should also have some knowledge about computers, includes but not limited to the fucntion of CPU and RAM. Note You do not need to have an advanced programming skills or expertise on computer architecture to read this tutorial.
+This tutorial expect you to have some basic programming skills -- you should be comfortable with at least one programming language. You should also have some knowledge about computers, includes but not limited to the function of CPU and RAM. Note You do not need to have an advanced programming skills or expertise on computer architecture to read this tutorial.
 
-### Tools will be used
+### Tools will be used Frequently
 
 #### GNU GCC
 
