@@ -95,7 +95,8 @@ Virtual disk is the software component (binary file) that emulate an actual disk
 
 #### fdisk
 
-"fdisk is a dialog-driven program for creation and manipulation of partition tables." (fdisk man page). We will be using fdisk to create partition table for our virtual disk.
+"fdisk is a dialog-driven program for creation
+ and manipulation of partition tables." (fdisk man page). We will be using fdisk to create partition table for our virtual disk.
 
 #### mke2fs
 
@@ -105,12 +106,16 @@ Virtual disk is the software component (binary file) that emulate an actual disk
 
 dd is used to copy a file, converting and formatting according to the operands. We will be using dd to write our boot code into MBR of our disk.
 
+### Concept
+
+#### Loop Device
+
 ### Creating Virtual Disk
 
 FIrst, we are going to create an empty disk. Type the following command in your shell:
 
-``` shell
-dd if=/dev/zero of=disk.img bs=1k count=32760
+```shell
+$ dd if=/dev/zero of=disk.img bs=1k count=32760
 ```
 This line of command creates a virtual disk of 32760*1024 bytes. 
 
@@ -119,3 +124,59 @@ This line of command creates a virtual disk of 32760*1024 bytes.
 * "bs=" specify number of bytes per block should be read and write at a time
 * "count=" specify the total number of input blocks, in our case -- number of blocks of null characters
 
+Next, let's create MBR on our disk image.
+
+```shell
+$ fdisk disk.img
+$ Command (m for help): x
+$ Expert command (m for help): h
+Number of heads (1-256, default 255): 16
+
+$ Expert command (m for help): s
+Number of sectors (1-63, default 63): 63
+Expert command (m for help): c
+Number of cylinders (1-1048576): 60
+
+$ Expert command (m for help): r
+
+$ Command (m for help): n
+Command action
+   e   extended
+   p   primary partition (1-4)
+p
+Partition number (1-4): 1
+First cylinder (1-60, default 1): 1
+Using default value 1
+Last cylinder or +size or +sizeM or +sizeK (1-60, default 60): 60
+Using default value 60
+
+$ Command (m for help): t
+Selected partition 1
+Hex code (type L to list codes): 83
+
+$ Command (m for help): a
+Partition number (1-4): 1
+
+$ Command (m for help): w
+The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+
+WARNING: Re-reading the partition table failed with error 25: Inappropriate
+ioctl for device.
+```
+<!-- TODO: Write Explanation-->
+Finally, we will be creating a filesystem on the disk.
+``` shell
+$ modprobe loop
+$ losetup -o 32256 /dev/loop0 disk.img
+$ mke2fs /dev/loop0
+$ losetup -d /dev/loop0
+```
+
+You can mount the disk if you wish to.
+``` shell
+$ modprobe ext2
+$ mkdir /mnt/vdisk
+$ mount disk.img /mnt/vdisk -text2 -o loop,offset=32256
+```
