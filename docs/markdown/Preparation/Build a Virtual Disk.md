@@ -15,7 +15,7 @@ Partition Table is the structure on the storage devices that describes each part
 
 ### MBR
 
-In [Boot Sequence](Boot Sequence.md#master-boot-record), we talked about MBR. In this section, we are going to talk about the partition entries inside MBR.
+In [Boot Sequence](Boot Sequence.md#master-boot-record), we talked about MBR. In this section, we are going to talk about the partition entries inside MBR. 
 
 ??? question "What are CHS, LBA"
     **CHS** (Cylinder-Head-Sector) and **LBA** (Logical Block Addressing) are two addressing methods used to address hard disks.
@@ -54,17 +54,13 @@ In [Boot Sequence](Boot Sequence.md#master-boot-record), we talked about MBR. In
         The CHS which DOS uses to call the BIOS is called L-CHS (Logical CHS) and the CHS which the BIOS uses to control the drive is the P-CHS (Physical CHS).
 
         There are two translation methods:
-        <!--TODO: Finish two translation scheme -->
+
         ### Directly translate L-CHS to P-CHS
 
         ATA-2 specification specifies that al EIDE drives up to 8 GB should conform to the BIOS sector limit of 63 sectors/track. Then only the number of cylinders will be above the BIOS limit of 1024.
 
         ### Translate L-CHS to LBA (LBA-assisted Method)
-        Content holder.
 
-        In ATA-6 standard, 48 bit LBA scheme was introduced
-
-        ### LBA48
 
 
 The layout of each entry:
