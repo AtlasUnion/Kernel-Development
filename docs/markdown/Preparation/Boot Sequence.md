@@ -44,7 +44,6 @@ The boot will proceed if and only if POST finds no problem.
 
 Right after POST, the BIOS checks bootable devices (Any  piece of hardware that can store files) for a boot signature, which is in a boot sector known as **MBR**. MBR is assumed to reside on the 1st sector on 1st track of a cylinder, under first head (See "Typical Hard Disk Geometry"). The boot signature contains bytes sequence 0x55, 0xAA at bytes offset 510 and 511 respectively. When the BIOS find such MBR, it is loaded into memory at 0x7c00 and the execution is transferred to MBR. Note the MBR cannot exceeds 512 bytes or one sector due to historical reasons (Someone arbitrarily decided the size. Then the design got popular and it became a standard.)  
 
-<!-- TODO: Remember to add link to Partition Table-->
 The MBR contains a bootstrap program and Partition Table. The first 440 bytes of the MBR contains so called bootstrap code.
 BIOS will load MBR to physical address 0x7c00 and then instruct CPU jumps to the beginning of the loaded MBR to start execute.
 
@@ -76,7 +75,7 @@ MBR table entries:
     | 0x7C00 | 512 bytes    | Boot Sector          |
     | 0x7E00 | 512 bytes    | Boot Data/Stack      |
 
-    The first entry is IVT or interrupt vector table. If you know what is an interrupt, this table is for CPU to find the address of code to execute for each interrupt call. If not, you can just see it as a structure needed for using functions provided by BIOS for now. Next is the BIOS data area, which BIOS will be using to do operation. Third is where the OS will be loaded. Next two are the boot sector and data area it uses to boot. This layout was created to give as much contiguous memory to the operating system as possible so the Boot sector was stored at the end of the memory.
+    The first entry is IVT or interrupt vector table. If you know what is an interrupt, this table is for CPU to find the address of code to execute for each interrupt call. If not, you can just see it as a structure needed for using functions provided by BIOS for now. Next is the BIOS data area, which BIOS will be using to do operation. Third is where the OS will be loaded. Next two are the boot sector and data area it uses to boot. This layout was created to give as much contiguous memory to the operating system as possible so the Boot sector was stored at the end of the memory. How? IVT and BDA cannot be overwritten as they will be needed for BIOS to operate properly so those two has to stay at the top. <!-- TODO: finish this-->
 
 ??? "Typical Hard Disk Geometry"
     ![CHS](/img/CHS.png)

@@ -5,6 +5,8 @@ theme:
     primary: 'light blue'
     accent:  'light blue'
 
+# TODO: Write reference page for each section 
+
 nav:
 - Introduction: 
     - 'Introduction': 'index.md'
@@ -14,6 +16,7 @@ nav:
     - 'UEFI': './markdown/Preparation/UEFI.md'
     - 'Virtual Disk': "./markdown/Preparation/Build a Virtual Disk.md"
 - Booting:
+    - 'Booting': './markdown/Booting/Booting.md'
     - 'Probe Memory': './markdown/Booting/Probe Memory.md'
     - 'Boot loader':  './markdown/Booting/Bootloader.md'
 
