@@ -140,6 +140,7 @@ Command action
    e   extended
    p   primary partition (1-4)
 p
+<!-- TODO: Rewrite this part (New version of fdisk no longer requires CHS but sector)-->
 Partition number (1-4): 1
 First cylinder (1-60, default 1): 1
 Using default value 1
