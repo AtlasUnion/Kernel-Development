@@ -61,8 +61,6 @@ In [Boot Sequence](Boot Sequence.md#master-boot-record), we talked about MBR. In
 
         ### Translate L-CHS to LBA (LBA-assisted Method)
 
-
-
 The layout of each entry:
 
 | Offset | Size    | Function                                                                                  |
@@ -105,6 +103,8 @@ dd is used to copy a file, converting and formatting according to the operands. 
 ### Concept
 
 #### Loop Device
+
+In Unix-like operating system, a loop device is a pseudo-device that makes a file accessible as a block device. A block device is a special file that provides buffered access to hardware devices, which means whatever the programmer writes to this device file will be buffered before send to actual hardware device. As mke2fs only operate on block devices, it is necessary to setup out disk with loop device.
 
 ### Creating Virtual Disk
 

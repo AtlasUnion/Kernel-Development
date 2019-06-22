@@ -41,7 +41,6 @@ Why do we need it? There are varieties of PC motherboards -- some have hardware 
 
     Shadowing essentially copy data from ROM into RAM for faster execution. The RAM area used is called shadow RAM.
 
-
 ## POST
 
 When the computer is switched on, the BIOS does a series of diagnostics called **POST** - Power On Self Test. For IBM-compatible PC POST, the principal duties of BIOS during POST includes:
