@@ -24,10 +24,23 @@ Why do we need it? There are varieties of PC motherboards -- some have hardware 
 * Memory Probe
 * etc
 
-??? question "Does CPU read BIOS from ROM?"
-    The answer is yes and no. The CPU does need to read BIOS from ROM initially. However, the reading speed of ROM is too slow for modern needs of fast booting process. So a technique called shadowing is used.
+??? question "Where does CPU read BIOS?"
+    Some of you maybe wondering how and where does CPU read BIOS from as BIOS resides on ROM instead of RAM. The answer is CPU read BIOS just like it reads anything from RAM in CPU's perspective.
+
+    The following table is the addresses for ROM area:
+
+    | start      | end        | size   | region                  | description            |
+    |------------|------------|--------|-------------------------|------------------------|
+    | 0x000A0000 | 0x000BFFFF | 128 KB | video RAM               | VGA display memory     |
+    | 0x000C0000 | 0x000C7FFF | 32 KB  | ROM                     | Video BIOS             |
+    | 0x000C8000 | 0x000EFFFF | 160 KB | ROMs and unusable space | Mapped hardware & Misc |
+    | 0x000F0000 | 0x000FFFFF | 64 KB  | ROM                     | Motherboard BIOS       |
+
+??? question "Does CPU execute BIOS from ROM?"
+    The answer is yes and no. The CPU does need to execute BIOS from ROM initially. However, the reading speed of ROM is too slow for modern needs of fast booting process. So a technique called shadowing is used.
 
     Shadowing essentially copy data from ROM into RAM for faster execution. The RAM area used is called shadow RAM.
+
 
 ## POST
 
