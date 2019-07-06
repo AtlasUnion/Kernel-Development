@@ -25,7 +25,15 @@ Why do we need it? There are varieties of PC motherboards -- some have hardware 
 * etc
 
 ??? question "Where does CPU read BIOS?"
-    Some of you maybe wondering how and where does CPU read BIOS from as BIOS resides on ROM instead of RAM. The answer is CPU read BIOS just like it reads anything from RAM in CPU's perspective.
+    CPU reads BIOS from address known as reset vector. The reset vector for 8086 processor is at FFFFh:0000h, which translated to physical address FFFF0h.
+
+    The reset vector for 80386 processor, which we will be emulating with qemu, is F000h:FFF0h. This segmented address is then translated to FFFFFFF0h. <!-TODO: finish-->
+
+    
+??? question "Does CPU execute BIOS from ROM?"
+    The answer is yes and no. The CPU does need to execute BIOS from ROM initially. However, the reading speed of ROM is too slow for modern needs of fast booting process. So a technique called shadowing is used.
+
+    Shadowing essentially copy data from ROM into RAM for faster execution. The RAM area used is called shadow RAM.
 
     The following table is the addresses for ROM area:
 
@@ -35,11 +43,6 @@ Why do we need it? There are varieties of PC motherboards -- some have hardware 
     | 0x000C0000 | 0x000C7FFF | 32 KB  | ROM                     | Video BIOS             |
     | 0x000C8000 | 0x000EFFFF | 160 KB | ROMs and unusable space | Mapped hardware & Misc |
     | 0x000F0000 | 0x000FFFFF | 64 KB  | ROM                     | Motherboard BIOS       |
-
-??? question "Does CPU execute BIOS from ROM?"
-    The answer is yes and no. The CPU does need to execute BIOS from ROM initially. However, the reading speed of ROM is too slow for modern needs of fast booting process. So a technique called shadowing is used.
-
-    Shadowing essentially copy data from ROM into RAM for faster execution. The RAM area used is called shadow RAM.
 
 ## POST
 
@@ -54,7 +57,7 @@ The boot will proceed if and only if POST finds no problem.
 
 ## Master Boot Record
 
-Right after POST, the BIOS checks bootable devices (Any  piece of hardware that can store files) for a boot signature, which is in a boot sector known as **MBR**. MBR is assumed to reside on the 1st sector on 1st track of a cylinder, under first head (See "Typical Hard Disk Geometry"). The boot signature contains bytes sequence 0x55, 0xAA at bytes offset 510 and 511 respectively. When the BIOS find such MBR, it is loaded into memory at 0x7c00 and the execution is transferred to MBR. Note the MBR cannot exceeds 512 bytes or one sector due to historical reasons (Someone arbitrarily decided the size. Then the design got popular and it became a standard.)  
+Right after POST, the BIOS checks bootable devices (Any  piece of hardware that can store files) for a boot signature, which is in a boot sector known as **MBR**. MBR is assumed to reside on the 1st sector on 1st track of a cylinder, under first head (See "Typical Hard Disk Geometry"). The boot signature contains bytes sequence 0x55, 0xAA at bytes offset 510 and 511 respectively. When the BIOS find such MBR, it is loaded into memory at 0x7c00 and the execution is transferred to loaded MBR. Note the MBR cannot exceeds 512 bytes or one sector due to historical reasons (Someone arbitrarily decided the size. Then the design got popular and it became a standard.)  
 
 The MBR contains a bootstrap program and Partition Table. The first 440 bytes of the MBR contains so called bootstrap code.
 BIOS will load MBR to physical address 0x7c00 and then instruct CPU jumps to the beginning of the loaded MBR to start execute.
@@ -109,7 +112,7 @@ Real Mode is a simple 16 bit mode that is present on all x86 processors. It was 
 
 In Real Mode, Segmentation is used to address memory. To be explicitly, Segment:Offset pair is used to address memory. Why do we have to do this instead of directly addressing the memory. The reason being the 8086 processor has 16 bit data bus width but also has 20 bit address lines connected to the main memory. This means the maximum memory the processor can address is $2^{20}$ byes or 1 MB.If using 16 bit to do direct memory addressing, then the total amount of addressable memory is restricted to $2^{16}$ bytes or 64 KB. To overcome this restriction, the engineers at Intel came up with so called Segmentation.
 
-Since there are in total 1 MB addressable memory, we can divide them into 64 KB segments -- in total 16 segments. To address bytes in each segments, we would need $log_2(64*1024)=16$ bits as offset. So by using 16 bit segment and 16 bit offset, the processor now is able to address entire 1 MB memory. 
+Since there are in total 1 MB addressable memory, we can divide them into 64 KB segments -- in total 16 segments. To address bytes in each segments, we would need $log_2(64*1024)=16$ bits as offset. So by using 16 bit segment and 16 bit offset, the processor now is able to address entire 1 MB memory.
 
 ### Protected Mode
 
