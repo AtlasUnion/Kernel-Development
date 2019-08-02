@@ -25,17 +25,15 @@ Why do we need it? There are varieties of PC motherboards -- some have hardware 
 * etc
 
 ??? question "Where does CPU read BIOS?"
-    CPU reads BIOS from address known as reset vector. The reset vector for 8086 processor is at FFFFh:0000h, which translated to physical address FFFF0h.
-
-    The reset vector for 80386 processor, which we will be emulating with qemu, is F000h:FFF0h. This segmented address is then translated to FFFFFFF0h. <!-TODO: finish-->
-
+    Some of you maybe wondering how and where does CPU read BIOS from as BIOS resides on ROM instead of RAM. The answer is CPU read BIOS just like it reads anything from RAM in CPU's perspective. Take Intel 80386 as an example -- the CPU produce address of FFFFFFF0h and feed to chipset, which you can think of a communication channel provided by motherboard. The chipset then forward to BIOS ROM.
     
+
 ??? question "Does CPU execute BIOS from ROM?"
     The answer is yes and no. The CPU does need to execute BIOS from ROM initially. However, the reading speed of ROM is too slow for modern needs of fast booting process. So a technique called shadowing is used.
 
     Shadowing essentially copy data from ROM into RAM for faster execution. The RAM area used is called shadow RAM.
 
-    The following table is the addresses for ROM area:
+    The following table is the addresses for ROM\ area:
 
     | start      | end        | size   | region                  | description            |
     |------------|------------|--------|-------------------------|------------------------|
@@ -43,6 +41,8 @@ Why do we need it? There are varieties of PC motherboards -- some have hardware 
     | 0x000C0000 | 0x000C7FFF | 32 KB  | ROM                     | Video BIOS             |
     | 0x000C8000 | 0x000EFFFF | 160 KB | ROMs and unusable space | Mapped hardware & Misc |
     | 0x000F0000 | 0x000FFFFF | 64 KB  | ROM                     | Motherboard BIOS       |
+??? Notes "BIOS Initialization"
+    <!--TODO:Finish this (https://wiki.osdev.org/System_Initialization_(x86))-->
 
 ## POST
 
